@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Silk Shine - Оптовые поставки тканей</title>
+    <script src="https://cdn.tailwindcss.com"></script> 
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #FFFFFF;  
+            color: #374151; 
+        }
+        /* Главная секция с видео */
+        .hero-section {
+            min-height: 100vh;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            text-align: center;
+        }
+        /* Видео на фоне */
+        #hero-video {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            z-index: -100;
+            transform: translateX(-50%) translateY(-50%);
+            object-fit: cover;
+        }
+        /* Полупрозрачный оверлей над видео */
+        .hero-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.3);
+            z-index: -50;
+        }
+        /* Контент главной секции */
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            color: #1F2937;
+        }
+        /* Заголовки */
+        .section-title {
+            font-size: 2.5rem; 
+            font-weight: 700;
+            margin-bottom: 1.5rem; 
+            text-align: center;
+            color: #1F2937; 
+        }
+        .sub-title {
+            font-size: 1.25rem; 
+            color: #4B5563; 
+            text-align: center;
+            margin-bottom: 3rem; 
+        }
+        /* Карточки */
+        .card {
+            background-color: #ffffff;
+            border-radius: 12px;
+            padding: 2rem; 
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.07), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid #E5E7EB; 
+        }
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        /* Кнопки */
+        .btn {
+            padding: 0.75rem 1.5rem; 
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .btn-primary { 
+            background-color: #D97706; 
+            color: white;
+        }
+        .btn-secondary { 
+            background-color: transparent;
+            color: #374151; 
+            border: 2px solid #374151; 
+        }
+        /* Анимация появления элементов */
+        .animated-element {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+        .animated-element.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        /* Иконки в карточках */
+        .icon-placeholder { 
+            width: 48px;
+            height: 48px;
+            background-color: #FEF3C7; 
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem; 
+            color: #D97706; 
+            font-weight: bold;
+        }
+        /* Отзывы клиентов */
+        .testimonial-card {
+            background-color: #fff;
+            border: 1px solid #E5E7EB; 
+            border-radius: 12px;
+            padding: 1.5rem; 
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03);
+            min-height: 150px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        /* Золотой цвет акцента */
+        .text-gold-accent {
+            color: #D97706; 
+        }
+        /* Модальные окна */
+        .modal {
+            position: fixed;
+            inset: 0;
+            background-color: rgba(0,0,0,0.5);
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            z-index: 100;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        .modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        .modal-content {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            max-width: 500px;
+            width: 100%;
+            position: relative;
+        }
+        .modal-close-btn {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            font-size: 1.5rem;
+            color: #6B7280;
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+        /* Блоки с характеристиками */
+        .ksp-block-container {
+            display: flex; 
+            flex-direction: column; 
+            gap: 1rem;
+        }
+        @media (min-width: 768px) { 
+            .ksp-block-container {
+                flex-direction: row; 
+            }
+        }
+        .ksp-block {
+            background-color: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(5px);
+            padding: 1rem;
+            border-radius: 0.5rem;
+            text-align: center; 
+            flex-grow: 1; 
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body class="overflow-x-hidden">
+    <!-- Навигационное меню -->
+    <nav class="bg-white/90 backdrop-blur-md shadow-sm sticky top-0 z-50">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="#" class="text-2xl font-bold text-amber-600">Silk Shine</a> 
+            <div class="space-x-4">
+                <a href="#about" class="text-gray-600 hover:text-amber-600 transition-colors">О нас</a>
+                <a href="#fabrics" class="text-gray-600 hover:text-amber-600 transition-colors">Ткани</a>
+                <a href="#reviews" class="text-gray-600 hover:text-amber-600 transition-colors">Отзывы</a>
+                <a href="#contact" class="btn btn-primary text-sm">Связаться</a> 
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Главная секция с видео -->
+    <header class="hero-section"> 
+        <video autoplay muted loop playsinline id="hero-video">
+            <source src="videos/Жакет Opium M-42 и брюки P-35.mp4" type="video/mp4">
+            Ваш браузер не поддерживает видео
+        </video>
+        <div class="hero-overlay"></div> 
+        <div class="container mx-auto px-6 hero-content">
+            <div class="animated-element">
+                <h1 class="text-5xl md:text-7xl font-extrabold mb-6 leading-tight"> 
+                    Оптовые поставки роскошных тканей<br class="hidden md:block"> для женской одежды
+                </h1>
+                <p class="text-xl md:text-2xl mb-10 text-amber-600"> 
+                    От малых ателье до крупных предприятий
+                </p>
+            </div>
+            <!-- Блок с условиями -->
+            <div class="ksp-block-container max-w-2xl mx-auto mb-12 animated-element" style="transition-delay: 0.2s;">
+                <div class="ksp-block">
+                    <span class="font-semibold text-gray-700 text-lg">Поставки от 50 метров</span>
+                </div>
+                <div class="ksp-block">
+                    <span class="font-semibold text-gray-700 text-lg">Доставка по всей России до 5 дней</span>
+                </div>
+            </div>
+            <!-- Кнопки действий -->
+            <div class="space-y-4 md:space-y-0 md:space-x-6 animated-element" style="transition-delay: 0.4s;">
+                <button type="button" data-modal-target="pricelist-modal" class="btn btn-primary text-lg px-8 py-3 open-modal-btn">Получить прайс-лист</button> 
+                <button type="button" data-modal-target="samples-modal" class="btn btn-secondary text-lg px-8 py-3 open-modal-btn">Запросить образцы</button> 
+            </div>
+        </div>
+    </header>
+    
+    <!-- Преимущества компании -->
+    <section id="value-prop" class="py-12 md:py-16 bg-white"> 
+        <div class="container mx-auto px-6">
+            <h2 class="section-title animated-element">Мы понимаем своего клиента</h2>
+            <p class="sub-title animated-element" style="transition-delay: 0.1s;">и даем лучшие условия по сотрудничеству</p>
+            <!-- Четыре карточки преимуществ -->
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <!-- Карточка 1 -->
+                <div class="card animated-element" style="transition-delay: 0.2s;">
+                    <div class="icon-placeholder"><span>50м.</span></div>
+                    <h3 class="text-xl font-semibold mb-3 text-gray-800">Минимальный опт от 50 метров</h3>
+                    <p class="text-gray-600 text-sm">Работаем с малым и средним бизнесом. Тестируйте новые ткани, гибко формируйте ассортимент, не замораживайте бюджет.</p>
+                </div>
+                <!-- Карточка 2 -->
+                <div class="card animated-element" style="transition-delay: 0.3s;">
+                    <div class="icon-placeholder"><span><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L1.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.25 12L17 13.75l-1.25-1.75L13.75 12l1.75-1.25L17 8.75l1.25 1.75L20.25 12l-1.75 1.25z" /></svg></span></div>
+                    <h3 class="text-xl font-semibold mb-3 text-gray-800">Бесплатные образцы</h3>
+                    <p class="text-gray-600 text-sm">Предоставляем до 5 образцов бесплатно. Проверяйте фактуру, цвет и качество до оплаты. Расширенный набор для постоянных клиентов.</p>
+                </div>
+                <!-- Карточка 3 -->
+                <div class="card animated-element" style="transition-delay: 0.4s;">
+                    <div class="icon-placeholder"><span><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 18.75a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 01-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h1.125c.621 0 1.125-.504 1.125-1.125V14.25m-17.25 4.5A2.625 2.625 0 005.625 21h12.75c.621 0 1.125-.504 1.125-1.125V14.25m-17.25 4.5h13.5" /></svg></span></div>
+                    <h3 class="text-xl font-semibold mb-3 text-gray-800">Быстрая доставка по РФ/СНГ</h3>
+                    <p class="text-gray-600 text-sm">Отгружаем в срок от 1-3 дней. Доставка СДЭК, Деловые Линии. В СНГ – проверенными партнерами. Самовывоз со склада.</p>
+                </div>
+                <!-- Карточка 4 -->
+                <div class="card animated-element" style="transition-delay: 0.5s;">
+                     <div class="icon-placeholder"><span><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" /></svg></span></div>
+                    <h3 class="text-xl font-semibold mb-3 text-gray-800">Консультация дизайнера</h3>
+                    <p class="text-gray-600 text-sm">Бесплатные консультации по подбору материалов. Рекомендации по трендам 2025. Помощь в расчете метража.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Популярные ткани -->
+    <section id="fabrics" class="py-12 md:py-16 bg-gray-50"> 
+        <div class="container mx-auto px-6">
+            <h2 class="section-title animated-element">Популярные ткани в 2025 году</h2>
+            <!-- Карточки тканей -->
+            <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                <!-- Блузки -->
+                <div class="card text-center animated-element" style="transition-delay: 0.1s;">
+                    <img src="images/photo_2023-12-18_16-39-19.jpg" alt="Шелковая блузка" class="rounded-lg mb-4 aspect-[4/3] object-cover">
+                    <h4 class="text-lg font-semibold mb-1 text-gray-800">Блузки</h4>
+                    <p class="text-sm text-gray-500 mb-3">Натуральный шелк, атлас</p>
+                    <a href="#contact" class="btn btn-secondary btn-sm w-full">Заказать</a>
+                </div>
+                <!-- Костюмы -->
+                <div class="card text-center animated-element" style="transition-delay: 0.2s;">
+                    <img src="images/photo_2025-05-04_13-20-48.jpg" alt="Шелковый костюм" class="rounded-lg mb-4 aspect-[4/3] object-cover">
+                    <h4 class="text-lg font-semibold mb-1 text-gray-800">Костюмы</h4>
+                    <p class="text-sm text-gray-500 mb-3">Шелковый креп, жаккард</p>
+                    <a href="#contact" class="btn btn-secondary btn-sm w-full">Заказать</a>
+                </div>
+                <!-- Платья -->
+                <div class="card text-center animated-element" style="transition-delay: 0.3s;">
+                    <img src="images/Снимок экрана 2025-03-27 144242.png" alt="Шелковое платье" class="rounded-lg mb-4 aspect-[4/3] object-cover">
+                    <h4 class="text-lg font-semibold mb-1 text-gray-800">Платья</h4>
+                    <p class="text-sm text-gray-500 mb-3">Шифон, органза, бархат</p>
+                    <a href="#contact" class="btn btn-secondary btn-sm w-full">Заказать</a>
+                </div>
+                <!-- Юбки -->
+                <div class="card text-center animated-element" style="transition-delay: 0.4s;">
+                    <img src="images/Снимок экрана 2025-03-27 144345.png" alt="Шелковая юбка" class="rounded-lg mb-4 aspect-[4/3] object-cover">
+                    <h4 class="text-lg font-semibold mb-1 text-gray-800">Юбки</h4>
+                    <p class="text-sm text-gray-500 mb-3">Шелковый сатин, плиссе</p>
+                    <a href="#contact" class="btn btn-secondary btn-sm w-full">Заказать</a>
+                </div>
+            </div>
+            <!-- Кнопка загрузки каталога -->
+            <div class="text-center mt-12 animated-element" style="transition-delay: 0.5s;">
+                <button type="button" data-modal-target="catalog-modal" class="btn btn-primary text-lg px-10 py-3 open-modal-btn">Скачать полный каталог</button>
+            </div>
+        </div>
+    </section>
+    
+    <!-- О компании -->
+    <section id="about" class="py-12 md:py-16 bg-white"> 
+        <div class="container mx-auto px-6">
+            <div class="grid lg:grid-cols-2 gap-12 items-center">
+                <!-- Текстовая часть -->
+                <div class="animated-element">
+                    <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-6">Silk Shine — надежный поставщик тканей для женской одежды с 2010 года</h2>
+                    <p class="text-gray-700 mb-4">Мы специализируемся на оптовых поставках качественных тканей, с акцентом на роскошный шелк, для женской одежды и работаем с производителями России и Беларуси. Наша миссия – помогать бизнесу создавать стильные и комфортные вещи, предлагая лучшие материалы по конкурентным ценам.</p>
+                    <p class="text-gray-700 mb-6">За годы работы мы сформировали долгосрочные партнерские отношения с фабриками, что позволяет гарантировать:</p>
+                    <ul class="space-y-3 mb-6 text-gray-700">
+                        <li class="flex items-center"><span class="text-amber-600 mr-2">&#10003;</span> Стабильные поставки без задержек</li>
+                        <li class="flex items-center"><span class="text-amber-600 mr-2">&#10003;</span> Доступные цены без посредников</li>
+                        <li class="flex items-center"><span class="text-amber-600 mr-2">&#10003;</span> Широкий ассортимент для любых коллекций</li>
+                    </ul>
+                    <p class="text-gray-700 mb-6">Наши ткани выбирают ателье, швейные производства и дизайнерские студии, потому что мы ценим качество, открыты к диалогу и всегда выполняем обещания.</p>
+                    <p class="font-semibold text-gray-800">Алена Шилковская, Директор Silk Shine</p>
+                </div>
+                <!-- Визуальная часть -->
+                <div class="animated-element" style="transition-delay: 0.2s;">
+                    <img src="images/ac3943c0-90d4-490d-8b3c-88b3a53dbe05.png.png" alt="Команда Silk Shine" class="rounded-xl shadow-xl w-full h-auto object-cover aspect-[6/5]">
+                    <div class="grid grid-cols-3 gap-4 mt-8 text-center">
+                        <!-- Счетчик 1 -->
+                        <div class="bg-gray-50 p-4 rounded-lg shadow-md">
+                            <p class="text-3xl font-bold text-amber-600 animated-counter" data-target="14">0</p>
+                            <p class="text-sm text-gray-600">лет на рынке</p>
+                        </div>
+                        <!-- Счетчик 2 -->
+                        <div class="bg-gray-50 p-4 rounded-lg shadow-md">
+                            <p class="text-3xl font-bold text-amber-600 animated-counter" data-target="500">0</p>
+                            <p class="text-sm text-gray-600">постоянных клиентов</p>
+                        </div>
+                        <!-- Счетчик 3 -->
+                        <div class="bg-gray-50 p-4 rounded-lg shadow-md">
+                            <p class="text-3xl font-bold text-amber-600 animated-counter" data-target="1000">0</p>
+                            <p class="text-sm text-gray-600">наименований</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Призыв к действию -->
+    <section class="py-12 md:py-16 bg-gray-800 text-white"> 
+        <div class="container mx-auto px-6 text-center">
+            <h2 class="text-3xl md:text-4xl font-bold mb-6 animated-element">Хотите работать с проверенным поставщиком?</h2>
+            <p class="text-lg md:text-xl mb-10 text-gray-300 animated-element" style="transition-delay: 0.1s;">Закажите консультацию или запросите образцы, чтобы убедиться в качестве наших тканей.</p>
+            <div class="space-y-4 md:space-y-0 md:space-x-6 animated-element" style="transition-delay: 0.2s;">
+                <a href="#contact" class="btn bg-white text-gray-800 hover:bg-gray-200 text-lg px-8 py-3">Заказать консультацию</a>
+                <button type="button" data-modal-target="samples-modal" class="btn border-2 border-white text-white hover:bg-white hover:text-gray-800 text-lg px-8 py-3 open-modal-btn">Запросить образцы</button>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Отзывы клиентов -->
+    <section id="reviews" class="py-12 md:py-16 bg-white"> 
+        <div class="container mx-auto px-6">
+            <h2 class="section-title animated-element">Отзывы наших клиентов</h2>
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mt-10">
+                <!-- Отзыв 1 -->
+                <div class="testimonial-card animated-element" style="transition-delay: 0.1s;">
+                    <img src="https://placehold.co/100x40/E5E7EB/9CA3AF?text=Лого+Клиента+1" alt="Логотип клиента" class="h-10 mb-4 opacity-70">
+                    <p class="text-gray-600 italic text-center">"Роскошный шелк и безупречный сервис! Silk Shine – наш главный партнер по тканям."</p>
+                    <p class="font-semibold text-sm text-gray-800 mt-4">- Ателье "Haute Couture Dreams"</p>
+                </div>
+                <!-- Отзыв 2 -->
+                <div class="testimonial-card animated-element" style="transition-delay: 0.2s;">
+                    <div class="w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mb-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8 text-amber-600"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" /></svg>
+                    </div>
+                    <p class="text-gray-700 font-medium">Письмо на фирменном бланке</p>
+                    <p class="text-sm text-gray-500">Дизайн-бюро "Silk & Style"</p>
+                </div>
+                <!-- Отзыв 3 -->
+                 <div class="testimonial-card animated-element" style="transition-delay: 0.3s;">
+                     <div class="w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mb-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8 text-amber-600"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" /></svg>
+                    </div>
+                    <p class="text-gray-700 font-medium">Письмо на фирменном бланке</p>
+                    <p class="text-sm text-gray-500">Модный дом "Velvet Touch"</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Контакты -->
+    <section id="contact" class="py-12 md:py-16 bg-gray-50"> 
+        <div class="container mx-auto px-6">
+            <h2 class="section-title animated-element">Связаться с нами</h2>
+            <p class="sub-title animated-element" style="transition-delay:0.1s;">Оставьте заявку, и мы свяжемся с вами в ближайшее время.</p>
+            <!-- Форма обратной связи -->
+            <form id="main-contact-form" class="max-w-xl mx-auto card animated-element" style="transition-delay:0.2s;">
+                <input type="hidden" name="form_source" value="main_contact_form">
+                <div class="mb-4">
+                    <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Ваше имя</label>
+                    <input type="text" id="name" name="name" required class="w-full p-2.5 border border-gray-300 rounded-md shadow-sm focus:ring-amber-500 focus:border-amber-500">
+                </div>
+                <div class="mb-4">
+                    <label for="email_contact" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                    <input type="email" id="email_contact" name="email" required class="w-full p-2.5 border border-gray-300 rounded-md shadow-sm focus:ring-amber-500 focus:border-amber-500">
+                </div>
+                <div class="mb-4">
+                    <label for="phone_contact" class="block text-sm font-medium text-gray-700 mb-1">Телефон</label>
+                    <input type="tel" id="phone_contact" name="phone" required class="w-full p-2.5 border border-gray-300 rounded-md shadow-sm focus:ring-amber-500 focus:border-amber-500">
+                </div>
+                <div class="mb-6">
+                    <label for="message_contact" class="block text-sm font-medium text-gray-700 mb-1">Сообщение</label>
+                    <textarea id="message_contact" name="message" rows="4" required class="w-full p-2.5 border border-gray-300 rounded-md shadow-sm focus:ring-amber-500 focus:border-amber-500"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary w-full text-lg py-3">Отправить заявку</button>
+            </form>
+        </div>
+    </section>
+    
+    <!-- Подвал -->
+    <footer class="bg-gray-800 text-gray-300 py-12"> 
+        <div class="container mx-auto px-6">
+            <div class="grid md:grid-cols-3 gap-8 mb-8">
+                <!-- О компании -->
+                <div>
+                    <h5 class="text-xl font-semibold text-white mb-3">Silk Shine</h5>
+                    <p class="text-sm">Оптовые поставки качественных тканей для вашего бизнеса. С нами выгодно и надежно.</p>
+                     <p class="text-sm mt-4">Email: <a href="mailto:info@silkshine.com" class="hover:text-amber-400 transition-colors">info@silkshine.com</a></p>
+                </div>
+                <!-- Контакты -->
+                <div>
+                    <h5 class="text-lg font-semibold text-white mb-3">Наши офисы</h5>
+                    <div class="space-y-3 text-sm">
+                        <div>
+                            <p class="font-medium text-gray-100">Головной офис (Минск):</p>
+                            <p>ул. Сурганова, д. 61, офис № 418</p>
+                            <p>Тел: <a href="tel:+375291103507" class="hover:text-amber-400 transition-colors">+375 29 110 35 07</a></p>
+                            <p>Тел: <a href="tel:+375172318833" class="hover:text-amber-400 transition-colors">+375 17 231 88 33</a></p>
+                        </div>
+                        <div>
+                            <p class="font-medium text-gray-100">Филиал (Гродно):</p>
+                            <p>ул. Николаева, 6А</p>
+                            <p>Тел: <a href="tel:+375292897283" class="hover:text-amber-400 transition-colors">+375 29 289 72 83</a></p>
+                        </div>
+                        <div>
+                            <p class="font-medium text-gray-100">Филиал (Брест):</p>
+                            <p>Коммерческая улица, 7/1</p>
+                            <p>Тел: <a href="tel:+375297250242" class="hover:text-amber-400 transition-colors">+375 29 725 02 42</a></p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Быстрые ссылки -->
+                <div>
+                    <h5 class="text-lg font-semibold text-white mb-3">Быстрые ссылки</h5>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="#about" class="hover:text-amber-400 transition-colors">О нас</a></li> 
+                        <li><a href="#fabrics" class="hover:text-amber-400 transition-colors">Каталог тканей</a></li>
+                        <li><a href="#value-prop" class="hover:text-amber-400 transition-colors">Условия сотрудничества</a></li>
+                        <li><a href="#contact" class="hover:text-amber-400 transition-colors">Связаться с нами</a></li>
+                    </ul>
+                </div>
+            </div>
+            <!-- Копирайт -->
+            <div class="border-t border-gray-700 pt-8 text-center text-sm">
+                <p>&copy; <span id="currentYear"></span> Silk Shine. Все права защищены.</p>
+            </div>
+        </div>
+    </footer>
+    
+    <!-- Модальные окна -->
+    <!-- Прайс-лист -->
+    <div id="pricelist-modal" class="modal">
+        <div class="modal-content">
+            <button type="button" class="modal-close-btn" data-modal-close>&times;</button>
+            <h3 class="text-xl font-semibold text-gray-800 mb-4">Получить прайс-лист</h3>
+            <p class="text-gray-600 mb-4">Пожалуйста, заполните форму ниже, чтобы получить актуальный прайс-лист на нашу продукцию.</p>
+            <form id="pricelist-form">
+                <input type="hidden" name="form_source" value="pricelist_request">
+                <div class="mb-4">
+                    <label for="email_pricelist" class="block text-sm font-medium text-gray-700 mb-1">Ваш Email</label>
+                    <input type="email" id="email_pricelist" name="email" required class="w-full p-2.5 border border-gray-300 rounded-md shadow-sm focus:ring-amber-500 focus:border-amber-500">
+                </div>
+                 <div class="mb-4">
+                    <label for="name_pricelist" class="block text-sm font-medium text-gray-700 mb-1">Ваше Имя (необязательно)</label>
+                    <input type="text" id="name_pricelist" name="name" class="w-full p-2.5 border border-gray-300 rounded-md shadow-sm focus:ring-amber-500 focus:border-amber-500">
+                </div>
+                <button type="submit" class="btn btn-primary w-full">Отправить</button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Образцы -->
+    <div id="samples-modal" class="modal">
+        <div class="modal-content">
+            <button type="button" class="modal-close-btn" data-modal-close>&times;</button>
+            <h3 class="text-xl font-semibold text-gray-800 mb-4">Запросить образцы</h3>
+            <p class="text-gray-600 mb-4">Выберите до 5 образцов бесплатно. Укажите ваши контактные данные, и наш менеджер свяжется с вами.</p>
+            <form id="samples-form">
+                <input type="hidden" name="form_source" value="samples_request">
+                <div class="mb-3">
+                    <label for="name_samples" class="block text-sm font-medium text-gray-700 mb-1">Ваше Имя</label>
+                    <input type="text" id="name_samples" name="name" required class="w-full p-2.5 border border-gray-300 rounded-md shadow-sm focus:ring-amber-500 focus:border-amber-500">
+                </div>
+                <div class="mb-3">
+                    <label for="phone_samples" class="block text-sm font-medium text-gray-700 mb-1">Ваш Телефон</label>
+                    <input type="tel" id="phone_samples" name="phone" required class="w-full p-2.5 border border-gray-300 rounded-md shadow-sm focus:ring-amber-500 focus:border-amber-500">
+                </div>
+                <div class="mb-4">
+                    <label for="message_samples" class="block text-sm font-medium text-gray-700 mb-1">Какие образцы вас интересуют?</label>
+                    <textarea id="message_samples" name="message" rows="3" required class="w-full p-2.5 border border-gray-300 rounded-md shadow-sm focus:ring-amber-500 focus:border-amber-500"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary w-full">Отправить запрос</button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Каталог -->
+    <div id="catalog-modal" class="modal">
+        <div class="modal-content">
+            <button type="button" class="modal-close-btn" data-modal-close>&times;</button>
+            <h3 class="text-xl font-semibold text-gray-800 mb-4">Скачать полный каталог</h3>
+            <p class="text-gray-600 mb-4">Оставьте ваш email, и мы вышлем вам полный каталог наших тканей.</p>
+            <form id="catalog-form">
+                <input type="hidden" name="form_source" value="catalog_request">
+                 <div class="mb-4">
+                    <label for="email_catalog" class="block text-sm font-medium text-gray-700 mb-1">Ваш Email</label>
+                    <input type="email" id="email_catalog" name="email" required class="w-full p-2.5 border border-gray-300 rounded-md shadow-sm focus:ring-amber-500 focus:border-amber-500">
+                </div>
+                <div class="mb-4">
+                    <label for="name_catalog" class="block text-sm font-medium text-gray-700 mb-1">Ваше Имя (необязательно)</label>
+                    <input type="text" id="name_catalog" name="name" class="w-full p-2.5 border border-gray-300 rounded-md shadow-sm focus:ring-amber-500 focus:border-amber-500">
+                </div>
+                <button type="submit" class="btn btn-primary w-full">Скачать</button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Сообщение об успехе -->
+    <div id="success-message" class="fixed bottom-5 right-5 bg-green-500 text-white p-4 rounded-lg shadow-lg hidden z-[110]">
+        Данные успешно отправлены!
+    </div>
+    
+    <!-- JavaScript -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Анимация появления элементов
+            const animatedElements = document.querySelectorAll('.animated-element');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, {
+                threshold: 0.1 
+            });
+            animatedElements.forEach(el => {
+                observer.observe(el);
+            });
+            
+            // Анимация счетчиков
+            const counters = document.querySelectorAll('.animated-counter');
+            const speed = 200; 
+            const animateCounter = (counter) => {
+                const target = +counter.getAttribute('data-target');
+                const count = +counter.innerText;
+                const inc = target / speed;
+                if (count < target) {
+                    counter.innerText = Math.ceil(count + inc);
+                    setTimeout(() => animateCounter(counter), 10);
+                } else {
+                    counter.innerText = target;
+                }
+            };
+            const counterObserver = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        animateCounter(entry.target);
+                        observer.unobserve(entry.target); 
+                    }
+                });
+            }, { threshold: 0.5 });
+            counters.forEach(counter => {
+                counterObserver.observe(counter);
+            });
+            
+            // Установка текущего года
+            document.getElementById('currentYear').textContent = new Date().getFullYear();
+            
+            // Плавный скролл к якорям
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    const href = this.getAttribute('href');
+                    if (document.querySelector(href) && document.querySelector(href).classList.contains('modal')) {
+                        return;
+                    }
+                    e.preventDefault();
+                    const targetElement = document.querySelector(href);
+                    if (targetElement) {
+                        targetElement.scrollIntoView({
+                            behavior: 'smooth'
+                        });
+                    } else if (href === '#') {
+                         window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }
+                });
+            });
+            
+            // Модальные окна
+            const openModalButtons = document.querySelectorAll('.open-modal-btn');
+            const closeModalButtons = document.querySelectorAll('[data-modal-close]');
+            const successMessage = document.getElementById('success-message');
+            
+            function openModal(modalId) {
+                const modal = document.getElementById(modalId);
+                if (modal) {
+                    modal.classList.add('active');
+                }
+            }
+            function closeModal(modal) {
+                if (modal) {
+                    modal.classList.remove('active');
+                }
+            }
+            
+            openModalButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const modalId = button.getAttribute('data-modal-target');
+                    openModal(modalId);
+                });
+            });
+            
+            closeModalButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const modal = button.closest('.modal');
+                    closeModal(modal);
+                });
+            });
+            
+            document.querySelectorAll('.modal').forEach(modal => {
+                modal.addEventListener('click', (event) => {
+                    if (event.target === modal) {
+                        closeModal(modal);
+                    }
+                });
+            });
+            
+            // Обработка форм
+            function handleFormSubmit(formId, modalToCloseId) {
+                const form = document.getElementById(formId);
+                if (form) {
+                    form.addEventListener('submit', function(event) {
+                        event.preventDefault(); 
+                        const formData = new FormData(form);
+                        const data = {};
+                        formData.forEach((value, key) => {
+                            data[key] = value;
+                        });
+                        console.log(`Данные из формы "${formId}":`, data);
+                        
+                        // Показываем сообщение об успехе
+                        showSuccessMessage();
+                        
+                        // Сбрасываем форму
+                        form.reset(); 
+                        
+                        // Закрываем модальное окно, если оно есть
+                        if (modalToCloseId) {
+                            const modal = document.getElementById(modalToCloseId);
+                            closeModal(modal);
+                        }
+                    });
+                }
+            }
+            
+            function showSuccessMessage() {
+                successMessage.classList.remove('hidden');
+                setTimeout(() => {
+                    successMessage.classList.add('hidden');
+                }, 3000); 
+            }
+            
+            // Инициализация обработчиков форм
+            handleFormSubmit('pricelist-form', 'pricelist-modal');
+            handleFormSubmit('samples-form', 'samples-modal');
+            handleFormSubmit('catalog-form', 'catalog-modal');
+            handleFormSubmit('main-contact-form', null); 
+        });
+    </script>
+</body>
+</html>
